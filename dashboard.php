@@ -187,7 +187,7 @@ mysqli_close($conn);
     <nav>
         <h2>Clip Techs</h2>
         <a href="consulta.php">📋 consulta API</a>
-        <a href="registrar_usuario.php">➕ Registrar Usuario</a>
+       <a href="registro.php">➕ Registrar Usuario</a>
         <form action="logout.php" method="post">
             <button class="logout" type="submit">Cerrar Sesión</button>
         </form>
