@@ -45,49 +45,145 @@ img {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    /* padding-top: 10px; */ /* Ajustado/eliminado si se maneja en .logo-link o .site-nav */
+    /* padding-bottom: 10px; */
 }
 
-.site-header .logo a {
-    color: #fff;
-    font-size: 1.5em;
+/* Estilos para el Logo en el Header */
+.logo-link {
+    display: flex; /* Permite alinear imagen y texto */
+    align-items: center; /* Centra verticalmente los elementos dentro del enlace */
+    text-decoration: none; /* Quita el subrayado del enlace */
+    color: inherit; /* Hereda el color del texto del padre (del header) */
+}
+
+.logo-img {
+    max-width: 150px; /* Ajusta este valor al ancho máximo que desees para tu logo */
+    height: auto;     /* Mantiene la proporción de la imagen */
+    display: block;   /* Ayuda a evitar espacios extra debajo de la imagen si es necesario */
+    margin-right: 10px; /* Espacio entre la imagen y el texto del H1 */
+}
+
+.logo-link h1 {
+    font-size: 1.5em; /* Coincide con .site-header .logo a original */
     font-weight: bold;
-    text-decoration: none;
+    margin: 0; /* Quitar márgenes por defecto del h1 para mejor alineación con flex */
 }
 
-.site-header .logo a:hover {
-    color: #f8f9fa;
-}
-
+/* Estilos para la Navegación Principal (Menú) - Usando la versión más detallada */
 .site-nav ul {
-    list-style: none;
+    list-style: none; /* Quita los puntos de la lista */
     padding: 0;
     margin: 0;
-    display: flex;
+    display: flex; /* Alinea los elementos del menú en una fila */
+    justify-content: flex-end; /* Alinea los botones a la derecha */
+    align-items: center; /* Centra verticalmente los botones en la barra de navegación */
 }
 
-.site-nav ul li {
-    margin-left: 20px;
+.site-nav li {
+    margin-left: 10px; /* Espacio entre los botones del menú */
 }
 
-.site-nav ul li a {
-    color: #f8f9fa; /* Un blanco ligeramente más suave */
-    text-decoration: none;
-    padding: 5px 10px;
-    border-radius: 4px;
-    transition: background-color 0.3s ease;
+.site-nav li:first-child {
+    margin-left: 0; /* Sin margen a la izquierda para el primer botón */
 }
 
-.site-nav ul li a:hover,
-.site-nav ul li a.active {
-    background-color: #495057; /* Un gris un poco más claro para el hover/active */
-    color: #fff;
+.site-nav li a {
+    display: inline-block; /* Permite aplicar padding y mantenerlo en línea */
+    padding: 10px 15px; /* Espaciado interno para que parezca un botón */
+    background-color: #007bff; /* Color de fondo del botón (azul ejemplo) */
+    color: #ffffff; /* Color del texto del botón (blanco) */
+    text-decoration: none; /* Quita el subrayado del enlace */
+    border-radius: 5px; /* Bordes redondeados */
+    font-weight: 500;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease; /* Transición suave */
+    border: 1px solid transparent; /* Borde transparente por defecto */
 }
+
+.site-nav li a:hover,
+.site-nav li a:focus { /* :focus para accesibilidad con teclado */
+    background-color: #0056b3; /* Color de fondo más oscuro al pasar el mouse */
+    color: #ffffff;
+    transform: translateY(-2px); /* Pequeño efecto de elevación */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Estilo específico para el botón de Cerrar Sesión */
+.site-nav li a.btn-logout {
+    background-color: #dc3545; /* Rojo para logout */
+    border-color: #dc3545;
+}
+
+.site-nav li a.btn-logout:hover,
+.site-nav li a.btn-logout:focus {
+    background-color: #c82333; /* Rojo más oscuro */
+    border-color: #bd2130;
+}
+
 
 /* Contenido Principal */
 .main-content {
     flex-grow: 1; /* Hace que el contenido principal ocupe el espacio disponible */
     padding: 30px 0;
 }
+
+/* Estilos para la Sección de Bienvenida en la Página Principal */
+.welcome-section {
+    background-color: #ffffff; /* Fondo blanco para la sección */
+    padding: 30px 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    margin-top: 20px; /* Espacio arriba si es necesario */
+    margin-bottom: 30px; /* Espacio abajo */
+    text-align: left; /* Alineación de texto a la izquierda por defecto */
+}
+
+.welcome-section h2 {
+    color: #333;
+    text-align: center;
+    font-size: 2em; /* Tamaño más grande para el título principal */
+    margin-bottom: 20px;
+}
+
+.welcome-section h3 {
+    color: #007bff; /* Color de acento para subtítulos (Misión, Visión, etc.) */
+    font-size: 1.5em;
+    margin-top: 30px; /* Espacio antes de cada subtítulo */
+    margin-bottom: 10px;
+    border-bottom: 2px solid #eee; /* Línea sutil debajo del subtítulo */
+    padding-bottom: 8px;
+}
+
+.welcome-section p {
+    font-size: 1.05em; /* Ligeramente más grande para mejor legibilidad */
+    line-height: 1.7;
+    color: #555; /* Color de texto principal para párrafos */
+    margin-bottom: 15px;
+}
+
+.welcome-section .objetivos-lista {
+    list-style: none; /* Quita los puntos por defecto */
+    padding-left: 0; /* Quita el padding por defecto */
+}
+
+.welcome-section .objetivos-lista li {
+    font-size: 1.05em;
+    color: #555;
+    padding-left: 25px; /* Espacio para el ícono personalizado */
+    position: relative;
+    margin-bottom: 10px; /* Espacio entre ítems de la lista */
+    line-height: 1.6;
+}
+
+.welcome-section .objetivos-lista li::before {
+    content: '✔'; /* Ícono de check (puedes usar ✅ directamente en el HTML si prefieres) */
+    color: #28a745; /* Color verde para el check */
+    position: absolute;
+    left: 0;
+    top: 1px; /* Ajuste fino de la posición vertical del ícono */
+    font-weight: bold;
+}
+
 
 /* Formularios de Autenticación y Perfil */
 .auth-container,
@@ -196,110 +292,14 @@ img {
 }
 
 .message.info {
-    color: #0c5460;
+    /* color: #0c5460;
     background-color: #d1ecf1;
-    border-color: #bee5eb;
+    border-color: #bee5eb; */
+    /* Usando la segunda definición que parece más actual */
+    background-color: #cce5ff;
+    color: #004085;
+    border: 1px solid #b8daff;
 }
-
-/* Estilos para el Dashboard (ejemplo básico) */
-.dashboard-header {
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #eee;
-}
-.dashboard-header h1 {
-    margin: 0;
-}
-
-.dashboard-welcome {
-    font-size: 1.2em;
-    margin-bottom: 20px;
-}
-
-.dashboard-content table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
-
-.dashboard-content th, .dashboard-content td {
-    border: 1px solid #ddd;
-    padding: 10px;
-    text-align: left;
-}
-
-.dashboard-content th {
-    background-color: #f2f2f2;
-}
-
-/* Estilos para el Perfil */
-.profile-container img {
-    display: block;
-    margin: 0 auto 20px auto; /* Centrar imagen de perfil */
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 4px solid #eee;
-}
-
-.profile-container p {
-    margin-bottom: 12px;
-    font-size: 1.1em;
-}
-.profile-container p strong {
-    color: #333;
-    min-width: 150px; /* Para alinear un poco los valores */
-    display: inline-block;
-}
-
-.profile-container hr {
-    margin: 25px 0;
-    border: 0;
-    border-top: 1px solid #eee;
-}
-
-.profile-container .btn-submit { /* Para el botón de editar perfil */
-    width: auto; /* No ocupa todo el ancho */
-    display: inline-block;
-    padding: 10px 20px;
-}
-
-
-/* Footer */
-.site-footer {
-    background-color: #343a40;
-    color: #adb5bd; /* Un gris más claro para el texto del footer */
-    text-align: center;
-    padding: 20px 0;
-    margin-top: auto; /* Empuja el footer hacia abajo */
-    font-size: 0.9em;
-}
-
-.site-footer p {
-    margin: 0;
-}
-
-/* Responsive (ejemplo básico) */
-@media (max-width: 768px) {
-    .header-container {
-        flex-direction: column;
-        text-align: center;
-    }
-    .site-nav ul {
-        flex-direction: column;
-        margin-top: 15px;
-    }
-    .site-nav ul li {
-        margin-left: 0;
-        margin-bottom: 10px;
-    }
-    .auth-container, .profile-container {
-        width: 90%;
-        padding: 20px;
-    }
-}
-/* ... (tus estilos existentes) ... */
 
 /* Estilos Generales del Dashboard */
 .dashboard-container {
@@ -324,9 +324,9 @@ img {
 }
 
 .dashboard-welcome {
-    font-size: 1.1em;
+    font-size: 1.1em; /* Ajustado desde 1.2em para consistencia */
     color: #555;
-    margin-bottom: 25px;
+    margin-bottom: 25px; /* Ajustado desde 20px */
     text-align: center;
 }
 
@@ -347,31 +347,6 @@ img {
     padding-bottom: 10px;
     margin-bottom: 15px;
 }
-
-/* Estilos para mensajes (si necesitas mejorarlos) */
-.message {
-    padding: 15px;
-    margin-bottom: 20px;
-    border-radius: 5px;
-    font-size: 0.95em;
-    text-align: center;
-}
-.message.success {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-}
-.message.error {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-}
-.message.info {
-    background-color: #cce5ff;
-    color: #004085;
-    border: 1px solid #b8daff;
-}
-
 
 /* Estilos para la Tabla de Usuarios */
 .table-responsive {
@@ -419,104 +394,96 @@ table tbody tr:hover {
     box-shadow: 0 0 5px rgba(0,0,0,0.1);
 }
 
-/* ... (más estilos si los necesitas) ... */
-/* ... (tus estilos existentes) ... */
-
-/* ... (todos tus estilos existentes ANTES de las reglas del logo) ... */
-
-.foto-usuario-tabla {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%; /* Hace la imagen redonda */
-    object-fit: cover; /* Asegura que la imagen cubra el espacio sin distorsionarse */
-    border: 2px solid #eee;
-    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+/* Estilos para el Perfil */
+.profile-container img.profile-pic { /* Añadida clase específica para evitar conflictos */
+    display: block;
+    margin: 0 auto 20px auto; /* Centrar imagen de perfil */
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #eee;
 }
 
-/* Estilos para el Logo en el Header */
-.logo-link {
-    display: flex; /* Permite alinear imagen y texto */
-    align-items: center; /* Centra verticalmente los elementos dentro del enlace */
-    text-decoration: none; /* Quita el subrayado del enlace */
-    color: inherit; /* Hereda el color del texto del padre (del header) */
+.profile-container p {
+    margin-bottom: 12px;
+    font-size: 1.1em;
+}
+.profile-container p strong {
+    color: #333;
+    min-width: 150px; /* Para alinear un poco los valores */
+    display: inline-block;
 }
 
-.logo-img {
-    max-width: 150px; /* Ajusta este valor al ancho máximo que desees para tu logo */
-    height: auto;     /* Mantiene la proporción de la imagen */
-    display: block;   /* Ayuda a evitar espacios extra debajo de la imagen si es necesario */
-    margin-right: 10px; /* Espacio entre la imagen y el texto del H1 */
+.profile-container hr {
+    margin: 25px 0;
+    border: 0;
+    border-top: 1px solid #eee;
 }
 
-.logo-link h1 {
-    /* El estilo del H1 dentro del logo ya se maneja por .site-header .logo a y .site-header .logo a:hover */
-    /* Puedes añadir estilos específicos aquí si es necesario, por ejemplo, para el tamaño de fuente si el general no es adecuado */
-    /* font-size: 1.2em; */ /* Ejemplo */
-    margin: 0; /* Quitar márgenes por defecto del h1 para mejor alineación con flex */
+.profile-container .btn-submit { /* Para el botón de editar perfil */
+    width: auto; /* No ocupa todo el ancho */
+    display: inline-block;
+    padding: 10px 20px;
 }
 
-/* ... (asegúrate de que no haya otra definición de .logo-img o .logo-link después de esto) ... */
-/* ... (el resto de tus estilos existentes si los hay después) ... */
 
-/* ... (tus estilos existentes) ... */
-
-/* Estilos para la Navegación Principal (Menú) */
-.site-nav ul {
-    list-style: none; /* Quita los puntos de la lista */
-    padding: 0;
-    margin: 0;
-    display: flex; /* Alinea los elementos del menú en una fila */
-    justify-content: flex-end; /* Alinea los botones a la derecha, puedes cambiar a center o flex-start */
-    align-items: center; /* Centra verticalmente los botones en la barra de navegación */
+/* Footer */
+.site-footer {
+    background-color: #343a40;
+    color: #adb5bd; /* Un gris más claro para el texto del footer */
+    text-align: center;
+    padding: 20px 0;
+    margin-top: auto; /* Empuja el footer hacia abajo */
+    font-size: 0.9em;
 }
 
-.site-nav li {
-    margin-left: 10px; /* Espacio entre los botones del menú */
+.site-footer p {
+    margin: 0 0 5px 0; /* Pequeño margen inferior para separar líneas en el footer */
+}
+.site-footer p:last-child {
+    margin-bottom: 0;
 }
 
-.site-nav li:first-child {
-    margin-left: 0; /* Sin margen a la izquierda para el primer botón */
-}
 
-.site-nav li a {
-    display: inline-block; /* Permite aplicar padding y mantenerlo en línea */
-    padding: 10px 15px; /* Espaciado interno para que parezca un botón (vertical horizontal) */
-    background-color: #007bff; /* Color de fondo del botón (azul ejemplo) */
-    color: #ffffff; /* Color del texto del botón (blanco) */
-    text-decoration: none; /* Quita el subrayado del enlace */
-    border-radius: 5px; /* Bordes redondeados */
-    font-weight: 500;
-    transition: background-color 0.3s ease, transform 0.2s ease; /* Transición suave para el hover */
-    border: 1px solid transparent; /* Borde transparente por defecto */
-}
+/* Responsive (ejemplo básico) */
+@media (max-width: 768px) {
+    .header-container {
+        flex-direction: column;
+        text-align: center;
+    }
+    .logo-link {
+        margin-bottom: 15px; /* Espacio entre logo y nav en móvil */
+    }
+    .site-nav ul {
+        flex-direction: column;
+        align-items: center; /* Centra los items del menú en móvil */
+        /* margin-top: 15px; */ /* Eliminado ya que .logo-link tiene margin-bottom */
+    }
+    .site-nav ul li {
+        margin-left: 0;
+        margin-bottom: 10px;
+        width: 100%; /* Hace que los enlaces ocupen todo el ancho disponible */
+    }
+    .site-nav ul li a {
+        display: block; /* Hace que el enlace ocupe todo el li */
+        text-align: center;
+    }
 
-.site-nav li a:hover,
-.site-nav li a:focus { /* :focus para accesibilidad con teclado */
-    background-color: #0056b3; /* Color de fondo más oscuro al pasar el mouse */
-    color: #ffffff;
-    transform: translateY(-2px); /* Pequeño efecto de elevación */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
+    .auth-container, 
+    .profile-container,
+    .dashboard-container { /* Incluye dashboard container en el responsive */
+        width: 90%;
+        padding: 20px;
+    }
 
-/* Estilo específico para el botón de Cerrar Sesión si quieres diferenciarlo */
-.site-nav li a.btn-logout {
-    background-color: #dc3545; /* Rojo para logout */
-    border-color: #dc3545;
+    .welcome-section {
+        padding: 20px 15px;
+    }
+    .welcome-section h2 {
+        font-size: 1.8em;
+    }
+    .welcome-section h3 {
+        font-size: 1.3em;
+    }
 }
-
-.site-nav li a.btn-logout:hover,
-.site-nav li a.btn-logout:focus {
-    background-color: #c82333; /* Rojo más oscuro */
-    border-color: #bd2130;
-}
-
-/* Ajustes para el contenedor del logo y la navegación si es necesario */
-.header-container {
-    display: flex;
-    justify-content: space-between; /* Separa el logo de la navegación */
-    align-items: center;
-    padding-top: 10px; /* Añade un poco de espacio arriba y abajo si es necesario */
-    padding-bottom: 10px;
-}
-
-/* ... (el resto de tus estilos existentes) ... */

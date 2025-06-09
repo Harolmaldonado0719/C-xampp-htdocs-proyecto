@@ -8,30 +8,18 @@ class User {
     public $id;
     public $nombre;
     public $email;
-    public $password_hash; // O simplemente password si no lo hasheas aquí directamente
+    public $password_hash; // La columna en BD se llama 'password', pero almacena el hash
     public $fotografia;
-    public $rol;
+    public $rol_id;       // Para almacenar el ID del rol del usuario
+    public $nombre_rol;   // Para almacenar el nombre del rol (obtenido del JOIN)
     public $fecha_registro;
 
-    /**
-     * Constructor de la clase User.
-     * @param mixed $db_connection La conexión a la base de datos.
-     */
     public function __construct($db_connection) {
         $this->conn = $db_connection;
     }
 
-    /**
-     * Crea un nuevo usuario en la base de datos.
-     * @param string $nombre
-     * @param string $email
-     * @param string $password La contraseña en texto plano
-     * @param string $rol El rol del usuario (ej. 'cliente', 'admin')
-     * @param string|null $fotografia Nombre del archivo de la fotografía (opcional)
-     * @return int|false El ID del usuario insertado o false en error.
-     */
-    public function create($nombre, $email, $password, $rol = 'cliente', $fotografia = null) {
-        $query = "INSERT INTO " . $this->table_name . " (nombre, email, password, fotografia, rol, fecha_registro) VALUES (?, ?, ?, ?, ?, NOW())";
+    public function create($nombre, $email, $password, $rol_id, $fotografia = null) {
+        $query = "INSERT INTO " . $this->table_name . " (nombre, email, password, fotografia, rol_id, fecha_registro) VALUES (?, ?, ?, ?, ?, NOW())";
         
         $stmt = mysqli_prepare($this->conn, $query);
         if (!$stmt) {
@@ -39,9 +27,8 @@ class User {
             return false;
         }
 
-        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-        
-        mysqli_stmt_bind_param($stmt, "sssss", $nombre, $email, $hashed_password, $fotografia, $rol);
+        $hashed_password_db = password_hash($password, PASSWORD_DEFAULT);
+        mysqli_stmt_bind_param($stmt, "ssssi", $nombre, $email, $hashed_password_db, $fotografia, $rol_id);
         
         if (mysqli_stmt_execute($stmt)) {
             return mysqli_insert_id($this->conn);
@@ -51,13 +38,12 @@ class User {
         }
     }
 
-    /**
-     * Busca un usuario por su email.
-     * @param string $email
-     * @return array|null Los datos del usuario (incluyendo rol) o null.
-     */
     public function findByEmail($email) {
-        $query = "SELECT id, nombre, email, password, fotografia, rol, fecha_registro FROM " . $this->table_name . " WHERE email = ? LIMIT 1";
+        $query = "SELECT u.id, u.nombre, u.email, u.password AS password_hash, u.fotografia, u.fecha_registro, 
+                         u.rol_id, r.nombre_rol 
+                  FROM " . $this->table_name . " u
+                  LEFT JOIN roles r ON u.rol_id = r.id
+                  WHERE u.email = ? LIMIT 1";
         
         $stmt = mysqli_prepare($this->conn, $query);
         if (!$stmt) {
@@ -75,13 +61,13 @@ class User {
         return null;
     }
 
-    /**
-     * Busca un usuario por su ID.
-     * @param int $id
-     * @return array|null Los datos del usuario (incluyendo rol) o null.
-     */
     public function findById($id) {
-        $query = "SELECT id, nombre, email, fotografia, rol, fecha_registro FROM " . $this->table_name . " WHERE id = ? LIMIT 1";
+        // CAMBIO: Seleccionar también la contraseña (hash)
+        $query = "SELECT u.id, u.nombre, u.email, u.password AS password_hash, u.fotografia, u.fecha_registro,
+                         u.rol_id, r.nombre_rol
+                  FROM " . $this->table_name . " u 
+                  LEFT JOIN roles r ON u.rol_id = r.id
+                  WHERE u.id = ? LIMIT 1";
         
         $stmt = mysqli_prepare($this->conn, $query);
          if (!$stmt) {
@@ -99,48 +85,22 @@ class User {
         return null;
     }
     
-    /**
-     * Actualiza los datos de un usuario.
-     * @param int $id
-     * @param string $nombre
-     * @param string $email
-     * @param string|null $fotografia
-     * @return bool True en éxito, false en error.
-     */
+    // El método update simple se puede eliminar si UserController::updateProfile maneja toda la lógica.
+    // Si se quiere mantener, debería ser más robusto o renombrarse para evitar confusión.
+    // Por ahora, lo comentaré para evitar conflictos con la lógica del controlador.
+    /*
     public function update($id, $nombre, $email, $fotografia = null) {
-        if ($fotografia !== null) { 
-            $query = "UPDATE " . $this->table_name . " SET nombre = ?, email = ?, fotografia = ? WHERE id = ?";
-            $stmt = mysqli_prepare($this->conn, $query);
-            if (!$stmt) {
-                error_log("Error al preparar la consulta update (con foto): " . mysqli_error($this->conn));
-                return false;
-            }
-            mysqli_stmt_bind_param($stmt, "sssi", $nombre, $email, $fotografia, $id);
-        } else {
-            $query = "UPDATE " . $this->table_name . " SET nombre = ?, email = ? WHERE id = ?";
-            $stmt = mysqli_prepare($this->conn, $query);
-            if (!$stmt) {
-                error_log("Error al preparar la consulta update (sin foto): " . mysqli_error($this->conn));
-                return false;
-            }
-            mysqli_stmt_bind_param($stmt, "ssi", $nombre, $email, $id);
-        }
-        
-        if (mysqli_stmt_execute($stmt)) {
-            return true; 
-        } else {
-            error_log("Error al ejecutar la consulta update: " . mysqli_stmt_error($stmt));
-            return false;
-        }
+        // ... (código anterior) ...
     }
+    */
 
-    /**
-     * Obtiene todos los usuarios (incluyendo rol).
-     * @return array
-     */
     public function getAllUsers() {
         $usuarios = [];
-        $query = "SELECT id, nombre, email, fecha_registro, fotografia, rol FROM " . $this->table_name . " ORDER BY fecha_registro DESC";
+        $query = "SELECT u.id, u.nombre, u.email, u.fecha_registro, u.fotografia, 
+                         u.rol_id, r.nombre_rol 
+                  FROM " . $this->table_name . " u
+                  LEFT JOIN roles r ON u.rol_id = r.id
+                  ORDER BY u.fecha_registro DESC";
         
         $result = mysqli_query($this->conn, $query);
         
@@ -155,11 +115,6 @@ class User {
         return $usuarios;
     }
 
-    /**
-     * Verifica si un email ya existe en la base de datos.
-     * @param string $email
-     * @return bool True si el email existe, false si no.
-     */
     public function emailExists($email) {
         $query = "SELECT id FROM " . $this->table_name . " WHERE email = ? LIMIT 1";
         
@@ -173,20 +128,12 @@ class User {
         mysqli_stmt_execute($stmt);
         mysqli_stmt_store_result($stmt); 
         
-        if (mysqli_stmt_num_rows($stmt) > 0) {
-            mysqli_stmt_close($stmt);
-            return true; 
-        }
-        
+        $num_rows = mysqli_stmt_num_rows($stmt);
         mysqli_stmt_close($stmt);
-        return false; 
+        
+        return $num_rows > 0; 
     }
 
-    /**
-     * Obtiene el nombre del archivo de fotografía de un usuario por su ID.
-     * @param int $id
-     * @return string|null El nombre del archivo o null si no tiene o no se encuentra.
-     */
     public function getFotografiaFilenameById($id) {
         $query = "SELECT fotografia FROM " . $this->table_name . " WHERE id = ? LIMIT 1";
         $stmt = mysqli_prepare($this->conn, $query);
@@ -205,6 +152,5 @@ class User {
         }
         return null;
     }
-
-} // <-- Esta llave cierra la clase User
+}
 ?>

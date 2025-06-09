@@ -1,0 +1,210 @@
+# URLs Importantes del Sistema Clip Techs Sistem
+
+Este archivo lista las principales URLs y rutas utilizadas en la aplicación.
+La URL base para el entorno de desarrollo local es: http://localhost/Proyecto-clip/public/
+
+## URLs Públicas (No requieren inicio de sesión)
+
+*   **Página de Inicio (Bienvenida):**
+    *   `/`
+    *   Ejemplo: http://localhost/Proyecto-clip/public/
+
+*   **Iniciar Sesión:**
+    *   `/login`
+    *   Ejemplo: http://localhost/Proyecto-clip/public/login
+
+*   **Registrarse:**
+    *   `/register`
+    *   Ejemplo: http://localhost/Proyecto-clip/public/register
+
+## URLs Privadas (Requieren inicio de sesión)
+
+### Comunes para todos los usuarios logueados:
+
+*   **Cerrar Sesión:**
+    *   `/logout`
+    *   Ejemplo: http://localhost/Proyecto-clip/public/logout
+
+*   **Mi Perfil:**
+    *   `/profile`
+    *   Ejemplo: http://localhost/Proyecto-clip/public/profile
+    *   `/profile/edit` (si tienes una ruta para editar perfil)
+    *   `/profile/change-password` (si tienes una ruta para cambiar contraseña)
+
+### Específicas para Administradores (Rol: admin)
+
+*   **Dashboard Principal del Administrador:**
+    *   `/dashboard`
+    *   Ejemplo: http://localhost/Proyecto-clip/public/dashboard
+
+*   **Gestión de Usuarios:**
+    *   `/admin/users` (Listar usuarios)
+    *   `/admin/users/create` (Formulario para crear nuevo usuario)
+    *   `/admin/users/store` (Procesar creación de usuario - POST)
+    *   `/admin/users/edit/{id}` (Formulario para editar usuario)
+    *   `/admin/users/update/{id}` (Procesar actualización de usuario - POST)
+    *   `/admin/users/delete/{id}` (Eliminar usuario - POST o GET con confirmación)
+
+*   **Gestión de Citas (Admin):**
+    *   `/admin/citas` (Listar todas las citas)
+    *   `/admin/citas/view/{id}` (Ver detalle de una cita)
+    *   `/admin/citas/edit/{id}` (Editar una cita)
+    *   `/admin/citas/update_status/{id}` (Actualizar estado de una cita)
+
+*   **Gestión de Servicios (Admin):**
+    *   `/admin/servicios` (Listar servicios)
+    *   `/admin/servicios/create`
+    *   `/admin/servicios/store`
+    *   `/admin/servicios/edit/{id}`
+    *   `/admin/servicios/update/{id}`
+    *   `/admin/servicios/delete/{id}`
+
+### Específicas para Clientes (Rol: cliente)
+
+*   **Portal de Servicios del Cliente:**
+    *   `/portal_servicios`
+    *   Ejemplo: http://localhost/Proyecto-clip/public/portal_servicios
+
+*   **Solicitar Nueva Cita:**
+    *   `/citas/solicitar`
+    *   `/citas/store` (Procesar solicitud de cita - POST)
+
+*   **Mis Citas (Cliente):**
+    *   `/mis_citas`
+    *   `/mis_citas/view/{id}`
+    *   `/mis_citas/cancelar/{id}` (Cancelar una cita)
+
+### Específicas para Empleados (Rol: empleado)
+
+*   **Dashboard del Empleado / Mis Citas Asignadas:**
+    *   `/empleado/dashboard` (o `/empleado/citas`)
+
+*   **Gestionar Cita Asignada (Empleado):**
+    *   `/empleado/citas/view/{id}`
+    *   `/empleado/citas/update_status/{id}` (Marcar como completada, etc.)
+
+## Endpoints de API (si aplica)
+
+*   **Base de la API:** `/api/` (Ej: http://localhost/Proyecto-clip/api/)
+*   `/api/status`
+*   `/api/servicios` (Listar servicios)
+*   `/api/horarios_disponibles?servicio_id={id}&fecha={fecha}`
+
+---
+**Nota:**
+*   Las rutas que contienen `{id}` esperan un identificador numérico.
+*   Algunas rutas pueden ser accedidas vía GET (para mostrar formularios/datos) y otras vía POST (para enviar datos/acciones).
+*   Esta lista debe mantenerse actualizada a medida que el sistema evoluciona.
+```
+
+**Instrucciones:**
+1.  **Reemplaza** el contenido actual de `c:\xampp\htdocs\Proyecto-clip\documentacion\urls_sistema.txt` con el texto de arriba.
+2.  **Revisa y adapta** cada sección y cada URL para que coincida con las rutas exactas que has definido o planeas definir en tu enrutador (`public/index.php`). Por ejemplo, si tu ruta para listar usuarios es `/usuarios/admin` en lugar de `/admin/users`, cámbiala en este archivo.
+3.  Elimina las secciones o URLs que no apliquen a tu proyecto.
+
+Este archivo te servirá como una referencia rápida de todas las "direcciones" de tu aplicación.// filepath: c:\xampp\htdocs\Proyecto-clip\documentacion\urls_sistema.txt
+# URLs Importantes del Sistema Clip Techs Sistem
+
+Este archivo lista las principales URLs y rutas utilizadas en la aplicación.
+La URL base para el entorno de desarrollo local es: http://localhost/Proyecto-clip/public/
+
+## URLs Públicas (No requieren inicio de sesión)
+
+*   **Página de Inicio (Bienvenida):**
+    *   `/`
+    *   Ejemplo: http://localhost/Proyecto-clip/public/
+
+*   **Iniciar Sesión:**
+    *   `/login`
+    *   Ejemplo: http://localhost/Proyecto-clip/public/login
+
+*   **Registrarse:**
+    *   `/register`
+    *   Ejemplo: http://localhost/Proyecto-clip/public/register
+
+## URLs Privadas (Requieren inicio de sesión)
+
+### Comunes para todos los usuarios logueados:
+
+*   **Cerrar Sesión:**
+    *   `/logout`
+    *   Ejemplo: http://localhost/Proyecto-clip/public/logout
+
+*   **Mi Perfil:**
+    *   `/profile`
+    *   Ejemplo: http://localhost/Proyecto-clip/public/profile
+    *   `/profile/edit` (si tienes una ruta para editar perfil)
+    *   `/profile/change-password` (si tienes una ruta para cambiar contraseña)
+
+### Específicas para Administradores (Rol: admin)
+
+*   **Dashboard Principal del Administrador:**
+    *   `/dashboard`
+    *   Ejemplo: http://localhost/Proyecto-clip/public/dashboard
+
+*   **Gestión de Usuarios:**
+    *   `/admin/users` (Listar usuarios)
+    *   `/admin/users/create` (Formulario para crear nuevo usuario)
+    *   `/admin/users/store` (Procesar creación de usuario - POST)
+    *   `/admin/users/edit/{id}` (Formulario para editar usuario)
+    *   `/admin/users/update/{id}` (Procesar actualización de usuario - POST)
+    *   `/admin/users/delete/{id}` (Eliminar usuario - POST o GET con confirmación)
+
+*   **Gestión de Citas (Admin):**
+    *   `/admin/citas` (Listar todas las citas)
+    *   `/admin/citas/view/{id}` (Ver detalle de una cita)
+    *   `/admin/citas/edit/{id}` (Editar una cita)
+    *   `/admin/citas/update_status/{id}` (Actualizar estado de una cita)
+
+*   **Gestión de Servicios (Admin):**
+    *   `/admin/servicios` (Listar servicios)
+    *   `/admin/servicios/create`
+    *   `/admin/servicios/store`
+    *   `/admin/servicios/edit/{id}`
+    *   `/admin/servicios/update/{id}`
+    *   `/admin/servicios/delete/{id}`
+
+### Específicas para Clientes (Rol: cliente)
+
+*   **Portal de Servicios del Cliente:**
+    *   `/portal_servicios`
+    *   Ejemplo: http://localhost/Proyecto-clip/public/portal_servicios
+
+*   **Solicitar Nueva Cita:**
+    *   `/citas/solicitar`
+    *   `/citas/store` (Procesar solicitud de cita - POST)
+
+*   **Mis Citas (Cliente):**
+    *   `/mis_citas`
+    *   `/mis_citas/view/{id}`
+    *   `/mis_citas/cancelar/{id}` (Cancelar una cita)
+
+### Específicas para Empleados (Rol: empleado)
+
+*   **Dashboard del Empleado / Mis Citas Asignadas:**
+    *   `/empleado/dashboard` (o `/empleado/citas`)
+
+*   **Gestionar Cita Asignada (Empleado):**
+    *   `/empleado/citas/view/{id}`
+    *   `/empleado/citas/update_status/{id}` (Marcar como completada, etc.)
+
+## Endpoints de API (si aplica)
+
+*   **Base de la API:** `/api/` (Ej: http://localhost/Proyecto-clip/api/)
+*   `/api/status`
+*   `/api/servicios` (Listar servicios)
+*   `/api/horarios_disponibles?servicio_id={id}&fecha={fecha}`
+
+---
+**Nota:**
+*   Las rutas que contienen `{id}` esperan un identificador numérico.
+*   Algunas rutas pueden ser accedidas vía GET (para mostrar formularios/datos) y otras vía POST (para enviar datos/acciones).
+*   Esta lista debe mantenerse actualizada a medida que el sistema evoluciona.
+```
+
+**Instrucciones:**
+1.  **Reemplaza** el contenido actual de `c:\xampp\htdocs\Proyecto-clip\documentacion\urls_sistema.txt` con el texto de arriba.
+2.  **Revisa y adapta** cada sección y cada URL para que coincida con las rutas exactas que has definido o planeas definir en tu enrutador (`public/index.php`). Por ejemplo, si tu ruta para listar usuarios es `/usuarios/admin` en lugar de `/admin/users`, cámbiala en este archivo.
+3.  Elimina las secciones o URLs que no apliquen a tu proyecto.
+
+Este archivo te servirá como una referencia rápida de todas las "direcciones" de tu aplicación.

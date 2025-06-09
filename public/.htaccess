@@ -1,12 +1,5 @@
-# filepath: C:\xampp\htdocs\Proyecto-clip\public\.htaccess
 RewriteEngine On
 
-# Redirigir solicitudes a directorios sin la barra diagonal final
-RewriteCond %{REQUEST_FILENAME} -d
-RewriteRule ^(.*[^/])$ %{REQUEST_URI}/ [L,R=301]
-
-# Si el archivo o directorio solicitado no existe directamente,
-# redirige la solicitud a index.php
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ index.php?route=$1 [L,QSA]
+RewriteRule ^ index.php [L]

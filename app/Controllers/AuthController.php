@@ -1,40 +1,71 @@
+
 <?php
+require_once __DIR__ . '/../Models/User.php';
 require_once __DIR__ . '/../Core/Database.php';
-require_once __DIR__ . '/../Models/User.php'; // Asegúrate de que el nombre del archivo sea User.php (mayúscula inicial)
 
 class AuthController {
+    private $userModel;
     private $db;
     private $conn;
-    private $userModel;
 
     public function __construct() {
         if (session_status() == PHP_SESSION_NONE) {
             session_start();
         }
-        try {
-            $this->db = new Database();
-            $this->conn = $this->db->getConnection();
-            $this->userModel = new User($this->conn); // Modelo User.php
-        } catch (Exception $e) {
-            error_log("AuthController: Error de conexión a BD - " . $e->getMessage());
-            die("Error crítico: No se pudo conectar al sistema de autenticación.");
-        }
+        $this->db = new Database();
+        $this->conn = $this->db->getConnection();
+        $this->userModel = new User($this->conn);
     }
 
-    public function showLoginForm($mensaje_error = null, $mensaje_exito = null) {
+    public function showLoginForm($mensaje_error = null, $mensaje_exito = null, $datos_previos = []) {
         $pageTitle = "Iniciar Sesión";
-        // Si el usuario ya está logueado, redirigir según rol
-        if (isset($_SESSION['usuario_id'])) {
-            if (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'admin') {
-                header("Location: " . BASE_URL . "dashboard");
-            } else {
-                header("Location: " . BASE_URL . "portal_servicios");
-            }
-            exit;
+        
+        // Priorizar mensajes pasados como parámetros
+        $mensaje_error_display = $mensaje_error;
+        $mensaje_exito_display = $mensaje_exito;
+
+        // Si no hay mensajes como parámetros, usar los de sesión (y luego limpiarlos)
+        if ($mensaje_error_display === null && isset($_SESSION['mensaje_error_global'])) {
+            $mensaje_error_display = $_SESSION['mensaje_error_global'];
+            unset($_SESSION['mensaje_error_global']);
         }
+        if ($mensaje_exito_display === null && isset($_SESSION['mensaje_exito_global'])) {
+            $mensaje_exito_display = $_SESSION['mensaje_exito_global'];
+            unset($_SESSION['mensaje_exito_global']);
+        }
+        
+        $email_val = $datos_previos['email_val'] ?? '';
+        if (empty($email_val) && isset($_SESSION['form_data']['email_val'])) {
+            $email_val = $_SESSION['form_data']['email_val'];
+        }
+        unset($_SESSION['form_data']); // Limpiar datos de formulario de sesión
+
+        // Si el usuario ya está logueado, redirigir a su dashboard correspondiente
+        if (isset($_SESSION['user_id'])) {
+            if (isset($_SESSION['user_rol_id'])) {
+                if ($_SESSION['user_rol_id'] == ID_ROL_ADMIN) {
+                    header("Location: " . BASE_URL . "dashboard");
+                    exit;
+                } elseif ($_SESSION['user_rol_id'] == ID_ROL_EMPLEADO) {
+                    header("Location: " . BASE_URL . "empleado/dashboard");
+                    exit;
+                } elseif ($_SESSION['user_rol_id'] == ID_ROL_CLIENTE) {
+                    header("Location: " . BASE_URL . "portal_servicios");
+                    exit;
+                } else {
+                    // Rol desconocido, pero logueado. Mejor cerrar sesión.
+                    $this->logout("Tu rol de usuario no está configurado. Sesión terminada.");
+                    exit;
+                }
+            } else {
+                 // user_id existe pero rol_id no. Sesión inconsistente.
+                $this->logout("Error de configuración de rol. Sesión terminada.");
+                exit;
+            }
+        }
+
         $viewPath = __DIR__ . '/../Views/auth/login.php';
-        $data_for_view = compact('pageTitle', 'mensaje_error', 'mensaje_exito');
-        extract($data_for_view);
+        extract(compact('pageTitle', 'mensaje_error_display', 'mensaje_exito_display', 'email_val', 'viewPath'));
         include __DIR__ . '/../Views/layouts/main_layout.php';
     }
 
@@ -46,7 +77,7 @@ class AuthController {
 
         $email = trim($_POST['email'] ?? '');
         $password = $_POST['password'] ?? '';
-        $email_val = $email; // Para repoblar el campo email en caso de error
+        $email_val = $email; 
 
         if (empty($email) || empty($password)) {
             $this->showLoginForm("Todos los campos son obligatorios.", null, ['email_val' => $email_val]);
@@ -55,38 +86,57 @@ class AuthController {
 
         $user = $this->userModel->findByEmail($email);
 
-        if ($user && password_verify($password, $user['password'])) {
-            $_SESSION['usuario_id'] = $user['id'];
-            $_SESSION['usuario_nombre'] = $user['nombre'];
-            $_SESSION['usuario_rol'] = $user['rol']; // <--- GUARDAR ROL EN SESIÓN
+        if ($user && isset($user['password_hash']) && password_verify($password, $user['password_hash'])) {
+            session_regenerate_id(true); 
 
-            // Redirigir según el rol
-            if ($user['rol'] === 'admin') {
-                header("Location: " . BASE_URL . "dashboard");
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['user_nombre'] = $user['nombre'];
+            $_SESSION['user_rol_id'] = $user['rol_id'] ?? null; 
+            $_SESSION['user_rol_nombre'] = $user['nombre_rol'] ?? null;
+            $_SESSION['user_fotografia'] = $user['fotografia'] ?? null;
+
+            if (isset($_SESSION['user_rol_id']) && $_SESSION['user_rol_id'] !== null) {
+                if ($_SESSION['user_rol_id'] == ID_ROL_ADMIN) {
+                    header("Location: " . BASE_URL . "dashboard");
+                    exit;
+                } elseif ($_SESSION['user_rol_id'] == ID_ROL_EMPLEADO) {
+                    header("Location: " . BASE_URL . "empleado/dashboard");
+                    exit;
+                } elseif ($_SESSION['user_rol_id'] == ID_ROL_CLIENTE) {
+                    header("Location: " . BASE_URL . "portal_servicios");
+                    exit;
+                } else {
+                    session_unset(); session_destroy(); if (session_status() == PHP_SESSION_NONE) { session_start(); }
+                    $this->showLoginForm("Tu rol de usuario no está configurado para el acceso. Contacta al administrador.", null, ['email_val' => $email_val]);
+                    exit; 
+                }
             } else {
-                // Para cualquier otro rol (ej. 'cliente')
-                header("Location: " . BASE_URL . "portal_servicios"); // <--- NUEVA RUTA PARA CLIENTES
+                session_unset(); session_destroy(); if (session_status() == PHP_SESSION_NONE) { session_start(); }
+                $this->showLoginForm("Error de configuración de rol. No se pudo determinar tu rol.", null, ['email_val' => $email_val]);
+                exit; 
             }
-            exit;
         } else {
             $this->showLoginForm("Correo electrónico o contraseña incorrectos.", null, ['email_val' => $email_val]);
         }
     }
+    
+    public function showRegisterForm($mensaje_error = null, $datos_previos = []) {
+        $pageTitle = "Registrarse";
 
-    public function showRegisterForm($mensaje_error = null, $datos_previos = [], $mensaje_exito = null) {
-         // Si el usuario ya está logueado, redirigir según rol
-        if (isset($_SESSION['usuario_id'])) {
-            if (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'admin') {
-                header("Location: " . BASE_URL . "dashboard");
-            } else {
-                header("Location: " . BASE_URL . "portal_servicios");
-            }
+        $mensaje_error_display = $mensaje_error ?? $_SESSION['mensaje_error_global'] ?? null;
+        unset($_SESSION['mensaje_error_global']);
+
+        $nombre_val = $datos_previos['nombre_val'] ?? $_SESSION['form_data']['nombre_val'] ?? '';
+        $email_val = $datos_previos['email_val'] ?? $_SESSION['form_data']['email_val'] ?? '';
+        unset($_SESSION['form_data']);
+
+        if (isset($_SESSION['user_id'])) {
+            header("Location: " . BASE_URL . "dashboard"); // O a donde corresponda
             exit;
         }
-        $pageTitle = "Registrarse";
+
         $viewPath = __DIR__ . '/../Views/auth/register.php';
-        $data_for_view = compact('pageTitle', 'mensaje_error', 'datos_previos', 'mensaje_exito');
-        extract($data_for_view);
+        extract(compact('pageTitle', 'mensaje_error_display', 'nombre_val', 'email_val', 'viewPath'));
         include __DIR__ . '/../Views/layouts/main_layout.php';
     }
 
@@ -100,20 +150,19 @@ class AuthController {
         $email = trim($_POST['email'] ?? '');
         $password = $_POST['password'] ?? '';
         $confirm_password = $_POST['confirm_password'] ?? '';
-        $fotografia_info = $_FILES['fotografia'] ?? null;
-        $nombre_foto = null;
 
-        $datos_previos = ['nombre' => $nombre, 'email' => $email]; // Para repoblar el formulario
+        $datos_previos = ['nombre_val' => $nombre, 'email_val' => $email];
+        $_SESSION['form_data'] = $datos_previos; // Guardar para repoblar
 
         if (empty($nombre) || empty($email) || empty($password) || empty($confirm_password)) {
-            $this->showRegisterForm("Todos los campos marcados con * son obligatorios.", $datos_previos);
+            $this->showRegisterForm("Todos los campos son obligatorios.", $datos_previos);
             return;
         }
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $this->showRegisterForm("El formato del correo electrónico no es válido.", $datos_previos);
             return;
         }
-        if (strlen($password) < 6) {
+        if (strlen($password) < 6) { // Ejemplo de validación de contraseña
             $this->showRegisterForm("La contraseña debe tener al menos 6 caracteres.", $datos_previos);
             return;
         }
@@ -121,76 +170,48 @@ class AuthController {
             $this->showRegisterForm("Las contraseñas no coinciden.", $datos_previos);
             return;
         }
-        
-        if ($this->userModel->emailExists($email)) {
-            $this->showRegisterForm("El correo electrónico ya está registrado. Intenta con otro.", $datos_previos);
+        if ($this->userModel->findByEmail($email)) {
+            $this->showRegisterForm("Este correo electrónico ya está registrado.", $datos_previos);
             return;
         }
 
-        // Manejo de subida de fotografía
-        if ($fotografia_info && $fotografia_info['error'] == UPLOAD_ERR_OK) {
-            $uploadDir = defined('APP_UPLOAD_DIR') ? APP_UPLOAD_DIR . DIRECTORY_SEPARATOR : __DIR__ . '/../../public/uploads/';
-            if (!is_dir($uploadDir) && !mkdir($uploadDir, 0775, true)) {
-                error_log("Error: No se pudo crear el directorio de subidas: " . $uploadDir);
-                $this->showRegisterForm("Error del servidor al procesar la imagen (directorio).", $datos_previos);
-                return;
-            }
-            $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
-            if (!in_array(strtolower($fotografia_info['type']), $allowedTypes) && !in_array(strtolower(mime_content_type($fotografia_info['tmp_name'])), $allowedTypes)) {
-                 $this->showRegisterForm("Tipo de archivo de imagen no permitido. Solo JPG, PNG, GIF.", $datos_previos);
-                return;
-            }
-            if ($fotografia_info['size'] > 2097152) { // 2MB
-                $this->showRegisterForm("El archivo de imagen es demasiado grande (máx 2MB).", $datos_previos);
-                return;
-            }
-            $extension = strtolower(pathinfo($fotografia_info['name'], PATHINFO_EXTENSION));
-            $nombre_foto = uniqid('user_', true) . '.' . $extension;
-            $ruta_destino = $uploadDir . $nombre_foto;
+        $password_hash = password_hash($password, PASSWORD_DEFAULT);
+        $rol_id = ID_ROL_CLIENTE; // Rol por defecto para nuevos registros
 
-            if (!move_uploaded_file($fotografia_info['tmp_name'], $ruta_destino)) {
-                error_log("Error al mover el archivo subido a: " . $ruta_destino . " - Error PHP: " . $fotografia_info['error']);
-                $nombre_foto = null; 
-                $this->showRegisterForm("Error al guardar la imagen de perfil.", $datos_previos);
-                return;
-            }
-        } elseif ($fotografia_info && $fotografia_info['error'] != UPLOAD_ERR_NO_FILE) {
-            $this->showRegisterForm("Error al subir la imagen: código " . $fotografia_info['error'], $datos_previos);
-            return;
-        }
-
-        // Crear usuario con rol 'cliente' por defecto
-        $userId = $this->userModel->create($nombre, $email, $password, 'cliente', $nombre_foto); // <--- ROL 'cliente' PASADO EXPLÍCITAMENTE
+        $userId = $this->userModel->create($nombre, $email, $password_hash, $rol_id);
 
         if ($userId) {
+            unset($_SESSION['form_data']); // Limpiar datos de formulario en éxito
             // Opcional: Iniciar sesión automáticamente después del registro
-            // $_SESSION['usuario_id'] = $userId;
-            // $_SESSION['usuario_nombre'] = $nombre;
-            // $_SESSION['usuario_rol'] = 'cliente'; // Asignar rol cliente
+            // $_SESSION['user_id'] = $userId;
+            // $_SESSION['user_nombre'] = $nombre;
+            // $_SESSION['user_rol_id'] = $rol_id;
+            // $_SESSION['user_rol_nombre'] = 'Cliente'; // O buscarlo en la BD
             // header("Location: " . BASE_URL . "portal_servicios");
             // exit;
             
             // O redirigir a login con mensaje de éxito
-            header("Location: " . BASE_URL . "login?mensaje_exito=" . urlencode("¡Registro exitoso! Ahora puedes iniciar sesión."));
-            exit;
+            $this->showLoginForm(null, "¡Registro exitoso! Ahora puedes iniciar sesión.", ['email_val' => $email]);
         } else {
-            // Si la creación del usuario falla, eliminar la foto si se subió
-            if ($nombre_foto && file_exists($uploadDir . $nombre_foto)) {
-                unlink($uploadDir . $nombre_foto);
-            }
-            $this->showRegisterForm("Error al registrar el usuario. Inténtalo de nuevo.", $datos_previos);
+            $this->showRegisterForm("Hubo un error durante el registro. Por favor, inténtalo de nuevo.", $datos_previos);
         }
     }
 
-    public function logout() {
+    public function logout($mensaje_logout = "Has cerrado sesión correctamente.") {
         session_unset();
         session_destroy();
-        header("Location: " . BASE_URL . "login?mensaje_exito=" . urlencode("Has cerrado sesión correctamente."));
+        // Iniciar una nueva sesión para poder pasar el mensaje
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
+        $_SESSION['mensaje_exito_global'] = $mensaje_logout;
+        // CAMBIO AQUÍ: Redirigir a la página principal
+        header("Location: " . BASE_URL);
         exit;
     }
 
     public function __destruct() {
-        if ($this->db) {
+        if (isset($this->db)) {
             $this->db->close();
         }
     }

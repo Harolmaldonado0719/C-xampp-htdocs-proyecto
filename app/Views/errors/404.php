@@ -1,5 +1,8 @@
+
 <?php
-// filepath: c:\xampp\htdocs\Proyecto-clip\app\Views\errors\404.php
+// Este es el único comentario filepath necesario, al inicio del bloque PHP.
+// Si tienes alguna lógica PHP que necesites ejecutar antes del HTML, iría aquí.
+?>
 <div class="error-container" style="text-align: center; padding: 40px;">
     <h1><?php echo isset($pageTitle) ? htmlspecialchars($pageTitle) : '404 - Página No Encontrada'; ?></h1>
     <p>Lo sentimos, la página que buscas no existe o ha sido movida.</p>
