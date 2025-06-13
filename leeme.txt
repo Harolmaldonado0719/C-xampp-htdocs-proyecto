@@ -1,0 +1,100 @@
+=================================================
+PROYECTO CLIP TECHS SISTEM - SISTEMA DE GESTIÓN PARA PELUQUERÍAS
+=================================================
+Desarrollado por: Harol Daniel Maldonado
+GA8-220501096-AA1-EV02 módulos integrados
+Fecha: Junio 2025
+
+Estimado profesor Jorje Eliecer Niño,
+
+Le presento mi proyecto "Clip Techs Sistem", una aplicación web desarrollada como parte de mi formación en el SENA.
+ Este sistema está diseñado para modernizar la gestión de peluquerías y salones de belleza, permitiendo automatizar citas, 
+ gestionar clientes, empleados, servicios y productos.
+
+DESCRIPCIÓN:
+-----------
+El sistema permite la gestión completa de un salón de belleza mediante una interfaz intuitiva que facilita:
+- Registro y autenticación de usuarios (clientes, empleados y administradores)
+- Gestión de citas y calendario
+- Catálogo de servicios y productos
+- Facturación
+- Reportes y estadísticas
+- Notificaciones
+- Atención al cliente (PQR)
+
+ESTRUCTURA DEL PROYECTO:
+----------------------
+El proyecto sigue una arquitectura MVC (Modelo-Vista-Controlador) personalizada:
+
+/app
+  /Config      - Archivos de configuración
+  /Controllers - Controladores que manejan la lógica de negocio
+  /Models      - Modelos para interactuar con la base de datos
+  /Views       - Vistas/plantillas para la interfaz de usuario
+  /Helpers     - Funciones auxiliares reutilizables
+  /Libs        - Librerías personalizadas
+
+/public        - Punto de entrada y archivos accesibles públicamente
+  /css         - Hojas de estilo
+  /js          - JavaScript
+  /img         - Imágenes
+  /uploads     - Archivos subidos por usuarios
+  index.php    - Punto de entrada principal
+
+/Documentacion - Archivos pdf
+  Archivos pdf - Documentacion propuesta para la evidencia
+
+CONFIGURACIÓN DE CONEXIÓN A BD:
+-----------------------------
+La conexión a la base de datos se realiza mediante el archivo app/Config/Database.php
+Los datos de conexión usados son:
+- Host: localhost
+- Usuario: root
+- Contraseña: (vacía)
+- Base de datos: clip_techs_db
+
+Si necesita modificar estos parámetros, puede hacerlo en ese archivo directamente.
+
+INSTALACIÓN:
+----------
+Para instalar y ejecutar el proyecto:
+1. Coloque la carpeta "Proyecto-clip" en su directorio htdocs de XAMPP
+2. Importe el archivo SQL "clip_techs_db.sql" (ubicado en resources/docs) a su servidor MySQL
+3. Acceda a http://localhost/Proyecto-clip/public/
+
+CREDENCIALES PARA PRUEBAS:
+-------------------------
+He creado tres tipos de usuarios para que pueda probar las diferentes funcionalidades:
+
+ADMINISTRADOR:
+Usuario: harolmaldonado14@gmail.com
+Contraseña: 123456
+
+EMPLEADO:
+Usuario: empleado@gmail.com.com
+Contraseña: 123456
+
+CLIENTE:
+Usuario: cliente@gmail.com
+Contraseña: 123456
+
+TECNOLOGÍAS UTILIZADAS:
+---------------------
+- PHP 8.2.12
+- MySQL/MariaDB
+- JavaScript/jQuery
+- Bootstrap 5
+- HTML5/CSS3
+
+NOTA IMPORTANTE:
+--------------
+Este proyecto ha sido desarrollado con fines educativos. Los datos que aparecen son ficticios y fueron creados para demostrar la funcionalidad del sistema.
+
+En los documentos pdf puede encontrar las demas instrucciones de instalacion "manual_tecnico.pdf"
+
+Cualquier duda o consulta, quedo atento.
+
+Atentamente,
+
+Harol Daniel Maldonado
+Aprendiz SENA
